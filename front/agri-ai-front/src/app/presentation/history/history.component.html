@@ -1,0 +1,256 @@
+<div class="max-w-7xl mx-auto">
+  <h1 class="text-3xl font-bold text-gray-800 mb-2">📜 Historique des analyses</h1>
+  <p class="text-gray-600 mb-8">
+    Consultez l'historique complet de vos analyses de plantes, filtrez par date ou par plante, et exportez vos données.
+  </p>
+
+  <!-- Filtres -->
+  <mat-card class="p-6 shadow-lg mb-8">
+    <mat-card-header>
+      <mat-card-title class="text-xl font-semibold">Filtres</mat-card-title>
+      <mat-card-subtitle>Affinez votre recherche dans l'historique</mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content class="mt-6">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <!-- Filtre par plante -->
+        <div>
+          <mat-form-field appearance="outline" class="w-full">
+            <mat-label>Nom de la plante</mat-label>
+            <input
+              matInput
+              [(ngModel)]="plantFilter"
+              placeholder="Ex: Tomate, Pomme de terre..."
+              [matAutocomplete]="auto"
+            />
+            <mat-autocomplete #auto="matAutocomplete">
+              <mat-option *ngFor="let plant of plantSuggestions" [value]="plant">
+                {{ plant }}
+              </mat-option>
+            </mat-autocomplete>
+            <mat-icon matSuffix>spa</mat-icon>
+            <mat-hint>Filtrer par nom de plante</mat-hint>
+          </mat-form-field>
+        </div>
+
+        <!-- Filtre par date -->
+        <div>
+          <mat-form-field appearance="outline" class="w-full">
+            <mat-label>Date d'analyse</mat-label>
+            <input matInput [matDatepicker]="picker" [(ngModel)]="dateFilter">
+            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+            <mat-datepicker #picker></mat-datepicker>
+            <mat-hint>Filtrer par date spécifique</mat-hint>
+          </mat-form-field>
+        </div>
+
+        <!-- Filtre par sévérité -->
+        <div>
+          <mat-form-field appearance="outline" class="w-full">
+            <mat-label>Sévérité de la maladie</mat-label>
+            <mat-select [(ngModel)]="severityFilter">
+              <mat-option value="">Toutes</mat-option>
+              <mat-option value="low">Faible</mat-option>
+              <mat-option value="medium">Moyenne</mat-option>
+              <mat-option value="high">Élevée</mat-option>
+            </mat-select>
+            <mat-icon matSuffix>warning</mat-icon>
+            <mat-hint>Filtrer par gravité</mat-hint>
+          </mat-form-field>
+        </div>
+      </div>
+
+      <!-- Boutons de filtrage -->
+      <div class="flex gap-4 pt-6">
+        <button mat-raised-button color="primary" (click)="applyFilters()" class="flex-1">
+          <mat-icon>filter_list</mat-icon>
+          Appliquer les filtres
+        </button>
+        
+        <button mat-stroked-button color="warn" (click)="clearFilters()" class="flex-1">
+          <mat-icon>clear_all</mat-icon>
+          Effacer les filtres
+        </button>
+
+        <button mat-stroked-button color="accent" (click)="exportHistory()" class="flex-1">
+          <mat-icon>download</mat-icon>
+          Exporter l'historique
+        </button>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- Tableau d'historique -->
+  <mat-card class="p-6 shadow-lg">
+    <mat-card-header class="mb-6">
+      <mat-card-title class="text-xl font-semibold">Analyses récentes</mat-card-title>
+      <mat-card-subtitle>
+        {{ filteredHistory.length }} analyse(s) trouvée(s)
+        <button mat-icon-button (click)="loadHistory()" [disabled]="isLoading" class="ml-2">
+          <mat-icon>refresh</mat-icon>
+        </button>
+      </mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content>
+      <!-- Chargement -->
+      <div *ngIf="isLoading" class="text-center py-12">
+        <mat-spinner diameter="40" class="mx-auto mb-4"></mat-spinner>
+        <p class="text-gray-600">Chargement de l'historique...</p>
+        <p class="text-sm text-gray-500">Veuillez patienter</p>
+      </div>
+
+      <!-- État vide -->
+      <div *ngIf="!isLoading && filteredHistory.length === 0" class="text-center py-12">
+        <mat-icon class="text-6xl text-gray-300 mb-4">history</mat-icon>
+        <p class="text-gray-500">Aucune analyse trouvée</p>
+        <p class="text-sm text-gray-400 mt-2">Ajustez vos filtres ou effectuez de nouvelles analyses</p>
+      </div>
+
+      <!-- Tableau -->
+      <div *ngIf="!isLoading && filteredHistory.length > 0" class="overflow-x-auto">
+        <table mat-table [dataSource]="filteredHistory" class="w-full">
+          <!-- Date -->
+          <ng-container matColumnDef="date">
+            <th mat-header-cell *matHeaderCellDef>Date</th>
+            <td mat-cell *matCellDef="let analysis">
+              <div class="font-medium">{{ formatDate(analysis.date) }}</div>
+            </td>
+          </ng-container>
+
+          <!-- Plante -->
+          <ng-container matColumnDef="plant">
+            <th mat-header-cell *matHeaderCellDef>Plante</th>
+            <td mat-cell *matCellDef="let analysis">
+              <div class="flex items-center gap-2">
+                <mat-icon class="text-green-500">spa</mat-icon>
+                <span class="font-medium">{{ analysis.plantId }}</span>
+              </div>
+            </td>
+          </ng-container>
+
+          <!-- Maladie -->
+          <ng-container matColumnDef="disease">
+            <th mat-header-cell *matHeaderCellDef>Maladie</th>
+            <td mat-cell *matCellDef="let analysis">
+              <div class="flex items-center gap-2">
+                <mat-icon class="text-red-500">warning</mat-icon>
+                <span>{{ analysis.diseaseId }}</span>
+              </div>
+            </td>
+          </ng-container>
+
+          <!-- Confiance -->
+          <ng-container matColumnDef="confidence">
+            <th mat-header-cell *matHeaderCellDef>Confiance</th>
+            <td mat-cell *matCellDef="let analysis">
+              <div class="flex items-center gap-2">
+                <div class="w-24 bg-gray-200 rounded-full h-2">
+                  <div class="bg-primary-500 h-2 rounded-full" [style.width.%]="analysis.confidence * 100"></div>
+                </div>
+                <span [class]="getConfidenceColor(analysis.confidence) + ' font-medium'">
+                  {{ analysis.confidence * 100 | number:'1.0-1' }}%
+                </span>
+              </div>
+            </td>
+          </ng-container>
+
+          <!-- Sévérité -->
+          <ng-container matColumnDef="severity">
+            <th mat-header-cell *matHeaderCellDef>Sévérité</th>
+            <td mat-cell *matCellDef="let analysis">
+              <span class="px-3 py-1 rounded-full text-sm font-medium" [class]="getSeverityColor('medium')">
+                <!-- Placeholder: À remplacer par analysis.severity quand disponible -->
+                Moyenne
+              </span>
+            </td>
+          </ng-container>
+
+          <!-- Actions -->
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef class="text-right">Actions</th>
+            <td mat-cell *matCellDef="let analysis" class="text-right">
+              <div class="flex justify-end gap-2">
+                <button mat-icon-button color="primary" (click)="viewDetails(analysis)" matTooltip="Voir les détails">
+                  <mat-icon>visibility</mat-icon>
+                </button>
+                <button mat-icon-button color="warn" (click)="deleteAnalysis(analysis)" matTooltip="Supprimer">
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </div>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        </table>
+      </div>
+
+      <!-- Statistiques -->
+      <div *ngIf="!isLoading && filteredHistory.length > 0" class="mt-8 pt-6 border-t border-gray-200">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div class="bg-blue-50 p-4 rounded-lg">
+            <div class="flex items-center gap-3">
+              <mat-icon class="text-blue-500">analytics</mat-icon>
+              <div>
+                <p class="text-sm text-gray-600">Analyses totales</p>
+                <p class="text-2xl font-bold text-gray-800">{{ history.length }}</p>
+              </div>
+            </div>
+          </div>
+          
+          <div class="bg-green-50 p-4 rounded-lg">
+            <div class="flex items-center gap-3">
+              <mat-icon class="text-green-500">spa</mat-icon>
+              <div>
+                <p class="text-sm text-gray-600">Plantes uniques</p>
+                <p class="text-2xl font-bold text-gray-800">
+                  {{ getUniquePlantsCount() }}
+                </p>
+              </div>
+            </div>
+          </div>
+          
+          <div class="bg-red-50 p-4 rounded-lg">
+            <div class="flex items-center gap-3">
+              <mat-icon class="text-red-500">warning</mat-icon>
+              <div>
+                <p class="text-sm text-gray-600">Maladies détectées</p>
+                <p class="text-2xl font-bold text-gray-800">
+                  {{ getUniqueDiseasesCount() }}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- Conseils -->
+  <div class="mt-8">
+    <mat-card class="p-6 shadow">
+      <mat-card-header>
+        <mat-card-title class="text-lg font-semibold">💡 Comment utiliser l'historique</mat-card-title>
+      </mat-card-header>
+      <mat-card-content class="mt-4">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div class="flex items-start gap-3">
+            <mat-icon class="text-primary-500">filter_alt</mat-icon>
+            <div>
+              <h4 class="font-medium">Filtrage avancé</h4>
+              <p class="text-sm text-gray-600">Utilisez les filtres pour trouver rapidement des analyses spécifiques par plante, date ou sévérité.</p>
+            </div>
+          </div>
+          <div class="flex items-start gap-3">
+            <mat-icon class="text-primary-500">trending_up</mat-icon>
+            <div>
+              <h4 class="font-medium">Suivi des tendances</h4>
+              <p class="text-sm text-gray-600">Surveillez l'évolution des maladies dans votre jardin au fil du temps.</p>
+            </div>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>

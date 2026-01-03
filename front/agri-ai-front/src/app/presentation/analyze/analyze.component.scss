@@ -1,0 +1,83 @@
+:host {
+  display: block;
+}
+
+// Styles pour la zone de dépôt de fichier
+.file-drop-zone {
+  transition: all 0.3s ease;
+
+  &:hover {
+    border-color: var(--mat-primary);
+    background-color: rgba(var(--mat-primary-rgb), 0.05);
+  }
+
+  &.has-file {
+    border-style: solid;
+    border-color: var(--mat-primary);
+  }
+}
+
+// Styles pour les cartes de résultats
+.result-card {
+  transition: transform 0.2s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+  }
+}
+
+// Badge de confiance
+.confidence-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.875rem;
+  font-weight: 500;
+
+  &.high {
+    background-color: rgba(34, 197, 94, 0.1);
+    color: rgb(21, 128, 61);
+  }
+
+  &.medium {
+    background-color: rgba(234, 179, 8, 0.1);
+    color: rgb(161, 98, 7);
+  }
+
+  &.low {
+    background-color: rgba(239, 68, 68, 0.1);
+    color: rgb(185, 28, 28);
+  }
+}
+
+// Animation pour le spinner
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.loading-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+// Responsive adjustments
+@media (max-width: 1024px) {
+  .grid-cols-1 {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .flex-col-mobile {
+    flex-direction: column;
+  }
+  
+  .gap-4 {
+    gap: 1rem;
+  }
+}

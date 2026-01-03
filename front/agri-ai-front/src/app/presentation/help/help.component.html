@@ -1,0 +1,167 @@
+<div class="help-container">
+  <!-- Header -->
+  <div class="header-section">
+    <h1 class="text-3xl font-bold text-gray-800 mb-2">Centre d'aide</h1>
+    <p class="text-gray-600 mb-6">Trouvez des réponses à vos questions et apprenez à utiliser Agri‑AI efficacement.</p>
+    
+    <!-- Search bar -->
+    <div class="search-bar">
+      <mat-icon class="search-icon">search</mat-icon>
+      <input 
+        type="text" 
+        placeholder="Rechercher dans l'aide..." 
+        class="search-input"
+        (input)="onSearch($event)"
+      >
+    </div>
+  </div>
+
+  <!-- Quick actions -->
+  <div class="quick-actions-section">
+    <h2 class="text-xl font-semibold text-gray-800 mb-4">Accès rapide</h2>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+      <mat-card class="quick-action-card" routerLink="/analyze">
+        <mat-card-content>
+          <div class="flex items-center">
+            <div class="icon-container bg-blue-100">
+              <mat-icon class="text-blue-600">search</mat-icon>
+            </div>
+            <div class="ml-4">
+              <h3 class="font-medium text-gray-800">Nouvelle analyse</h3>
+              <p class="text-sm text-gray-600">Analyser une plante</p>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="quick-action-card" routerLink="/history">
+        <mat-card-content>
+          <div class="flex items-center">
+            <div class="icon-container bg-green-100">
+              <mat-icon class="text-green-600">history</mat-icon>
+            </div>
+            <div class="ml-4">
+              <h3 class="font-medium text-gray-800">Historique</h3>
+              <p class="text-sm text-gray-600">Voir les analyses passées</p>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="quick-action-card" (click)="openExternalLink('mailto:support@agri-ai.com')">
+        <mat-card-content>
+          <div class="flex items-center">
+            <div class="icon-container bg-purple-100">
+              <mat-icon class="text-purple-600">support_agent</mat-icon>
+            </div>
+            <div class="ml-4">
+              <h3 class="font-medium text-gray-800">Support</h3>
+              <p class="text-sm text-gray-600">Contacter l'équipe</p>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+
+  <!-- FAQ Section -->
+  <div class="faq-section">
+    <div class="flex justify-between items-center mb-6">
+      <h2 class="text-xl font-semibold text-gray-800">Questions fréquentes (FAQ)</h2>
+      <button mat-button color="primary" routerLink="/settings">
+        <mat-icon>settings</mat-icon>
+        Paramètres
+      </button>
+    </div>
+
+    <mat-accordion class="faq-accordion">
+      <mat-expansion-panel *ngFor="let item of faqItems">
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            <mat-icon class="mr-3">{{item.icon}}</mat-icon>
+            {{item.question}}
+          </mat-panel-title>
+        </mat-expansion-panel-header>
+        <p class="text-gray-700">{{item.answer}}</p>
+      </mat-expansion-panel>
+    </mat-accordion>
+  </div>
+
+  <!-- Guides & Tutorials -->
+  <div class="guides-section">
+    <h2 class="text-xl font-semibold text-gray-800 mb-6">Guides rapides</h2>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <mat-card *ngFor="let guide of quickGuides" class="guide-card">
+        <mat-card-header>
+          <div class="guide-icon-container">
+            <mat-icon>{{guide.icon}}</mat-icon>
+          </div>
+          <mat-card-title class="ml-3">{{guide.title}}</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <p class="text-gray-600 mb-4">{{guide.description}}</p>
+          <mat-divider class="mb-4"></mat-divider>
+          <mat-list dense>
+            <mat-list-item *ngFor="let step of guide.steps">
+              <mat-icon matListItemIcon>check_circle</mat-icon>
+              <div matListItemTitle>{{step}}</div>
+            </mat-list-item>
+          </mat-list>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+
+  <!-- Contact Information -->
+  <div class="contact-section">
+    <mat-card class="contact-card">
+      <mat-card-header>
+        <mat-card-title>Contactez-nous</mat-card-title>
+        <mat-card-subtitle>Notre équipe est là pour vous aider</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <h3 class="font-medium text-gray-800 mb-4">Informations de contact</h3>
+            <mat-list>
+              <mat-list-item *ngFor="let contact of contactInfo" (click)="openExternalLink(contact.action)">
+                <mat-icon matListItemIcon>{{contact.icon}}</mat-icon>
+                <div matListItemTitle class="cursor-pointer hover:text-primary-600">{{contact.text}}</div>
+              </mat-list-item>
+            </mat-list>
+          </div>
+          <div>
+            <h3 class="font-medium text-gray-800 mb-4">Heures de support</h3>
+            <div class="space-y-3">
+              <div class="flex justify-between">
+                <span class="text-gray-600">Lundi - Vendredi</span>
+                <span class="font-medium">8h00 - 18h00</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-gray-600">Samedi</span>
+                <span class="font-medium">9h00 - 13h00</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-gray-600">Dimanche</span>
+                <span class="font-medium">Fermé</span>
+              </div>
+            </div>
+            <mat-divider class="my-6"></mat-divider>
+            <p class="text-gray-600 text-sm">
+              Pour les urgences concernant des maladies graves, contactez-nous par téléphone.
+              Nous répondons généralement dans les 24 heures par email.
+            </p>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <!-- Footer note -->
+  <div class="footer-note">
+    <mat-icon class="mr-2">info</mat-icon>
+    <span class="text-gray-600">
+      Cette aide est mise à jour régulièrement. Dernière mise à jour : {{currentDate | date:'dd/MM/yyyy'}}
+    </span>
+  </div>
+</div>

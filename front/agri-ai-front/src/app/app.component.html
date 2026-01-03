@@ -1,0 +1,85 @@
+<mat-toolbar color="primary" class="shadow-lg">
+  <mat-toolbar-row class="px-4">
+    <div class="flex items-center gap-4">
+      <span class="text-xl font-bold">🌿 Agri AI</span>
+      <nav class="hidden md:flex gap-6 ml-8">
+        <a mat-button routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
+          <mat-icon>dashboard</mat-icon>
+          Tableau de bord
+        </a>
+        <a mat-button routerLink="/analyze" routerLinkActive="active">
+          <mat-icon>search</mat-icon>
+          Analyser
+        </a>
+        <a mat-button routerLink="/history" routerLinkActive="active">
+          <mat-icon>history</mat-icon>
+          Historique
+        </a>
+      </nav>
+    </div>
+    
+    <div class="flex-1"></div>
+    
+    <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Menu utilisateur">
+      <mat-icon>account_circle</mat-icon>
+    </button>
+    <mat-menu #menu="matMenu">
+      <button mat-menu-item routerLink="/settings">
+        <mat-icon>settings</mat-icon>
+        <span>Paramètres</span>
+      </button>
+      <button mat-menu-item routerLink="/help">
+        <mat-icon>help</mat-icon>
+        <span>Aide</span>
+      </button>
+      <mat-divider></mat-divider>
+      <button mat-menu-item>
+        <mat-icon>logout</mat-icon>
+        <span>Déconnexion</span>
+      </button>
+    </mat-menu>
+  </mat-toolbar-row>
+</mat-toolbar>
+
+<div class="min-h-screen bg-gray-50">
+  <div class="container mx-auto px-4 py-8">
+    <router-outlet></router-outlet>
+  </div>
+</div>
+
+<footer class="bg-primary-800 text-white py-6 mt-12">
+  <div class="container mx-auto px-4">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <div>
+        <h3 class="text-xl font-bold mb-4">🌿 Agri AI</h3>
+        <p class="text-primary-200">
+          Intelligence artificielle pour le diagnostic des maladies des plantes.
+          Protégez vos cultures avec notre technologie de pointe.
+        </p>
+      </div>
+      
+      <div>
+        <h4 class="font-semibold mb-4">Liens rapides</h4>
+        <ul class="space-y-2">
+          <li><a href="#" class="text-primary-200 hover:text-white transition">Documentation</a></li>
+          <li><a href="#" class="text-primary-200 hover:text-white transition">API</a></li>
+          <li><a href="#" class="text-primary-200 hover:text-white transition">Support</a></li>
+          <li><a href="#" class="text-primary-200 hover:text-white transition">Contact</a></li>
+        </ul>
+      </div>
+      
+      <div>
+        <h4 class="font-semibold mb-4">Contact</h4>
+        <p class="text-primary-200">
+          📧 contact&#64;agri-ai.com<br>
+          📞 +33 1 23 45 67 89<br>
+          🏢 Paris, France
+        </p>
+      </div>
+    </div>
+    
+    <div class="border-t border-primary-700 mt-8 pt-6 text-center text-primary-300">
+      <p>&copy; 2024 Agri AI. Tous droits réservés.</p>
+    </div>
+  </div>
+</footer>

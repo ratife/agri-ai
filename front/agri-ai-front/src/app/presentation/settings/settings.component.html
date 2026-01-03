@@ -1,0 +1,350 @@
+<div class="settings-container">
+  <!-- En-tête -->
+  <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
+    <div>
+      <h1 class="text-3xl font-bold text-gray-900">Paramètres</h1>
+      <p class="text-gray-600 mt-2">Configurez l'application selon vos préférences</p>
+    </div>
+    
+    <div class="flex gap-3">
+      <button mat-stroked-button color="primary" (click)="exportSettings()">
+        <mat-icon>download</mat-icon>
+        <span class="ml-2">Exporter</span>
+      </button>
+      <button mat-stroked-button color="warn" (click)="resetToDefaults()">
+        <mat-icon>restart_alt</mat-icon>
+        <span class="ml-2">Réinitialiser</span>
+      </button>
+      <button mat-raised-button color="primary" (click)="saveSettings()">
+        <mat-icon>save</mat-icon>
+        <span class="ml-2">Sauvegarder</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Sections de paramètres -->
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <!-- Colonne gauche -->
+    <div class="lg:col-span-2 space-y-8">
+      <!-- Préférences générales -->
+      <mat-card>
+        <mat-card-header>
+          <mat-card-title>
+            <div class="flex items-center">
+              <div class="p-2 bg-blue-100 rounded-lg mr-3">
+                <mat-icon class="text-blue-600">settings</mat-icon>
+              </div>
+              <div>
+                <div class="font-semibold">Préférences générales</div>
+                <div class="text-sm text-gray-500">Langue, thème et comportement général</div>
+              </div>
+            </div>
+          </mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="space-y-6 mt-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <mat-form-field  class="w-full">
+                <mat-label>Langue</mat-label>
+                <mat-select [(ngModel)]="language">
+                  <mat-option *ngFor="let lang of languages" [value]="lang.code">
+                    {{ lang.name }}
+                  </mat-option>
+                </mat-select>
+                <mat-icon matSuffix>language</mat-icon>
+              </mat-form-field>
+
+              <mat-form-field  class="w-full">
+                <mat-label>Thème</mat-label>
+                <mat-select [(ngModel)]="theme">
+                  <mat-option *ngFor="let themeOption of themes" [value]="themeOption.id">
+                    {{ themeOption.name }}
+                  </mat-option>
+                </mat-select>
+                <mat-icon matSuffix>palette</mat-icon>
+              </mat-form-field>
+            </div>
+
+            <div class="space-y-4">
+              <div class="flex items-center justify-between">
+                <div>
+                  <h4 class="font-medium">Notifications</h4>
+                  <p class="text-sm text-gray-500">Activer les notifications système</p>
+                </div>
+                <mat-slide-toggle [(ngModel)]="notificationsEnabled" color="primary"></mat-slide-toggle>
+              </div>
+
+              <mat-divider></mat-divider>
+
+              <div class="flex items-center justify-between">
+                <div>
+                  <h4 class="font-medium">Sauvegarde automatique</h4>
+                  <p class="text-sm text-gray-500">Sauvegarder automatiquement les analyses</p>
+                </div>
+                <mat-slide-toggle [(ngModel)]="autoSave" color="primary"></mat-slide-toggle>
+              </div>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <!-- Préférences d'analyse -->
+      <mat-card>
+        <mat-card-header>
+          <mat-card-title>
+            <div class="flex items-center">
+              <div class="p-2 bg-green-100 rounded-lg mr-3">
+                <mat-icon class="text-green-600">analytics</mat-icon>
+              </div>
+              <div>
+                <div class="font-semibold">Préférences d'analyse</div>
+                <div class="text-sm text-gray-500">Configuration des analyses de plantes</div>
+              </div>
+            </div>
+          </mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="space-y-6 mt-4">
+            <div>
+              <div class="flex justify-between items-center mb-2">
+                <label class="font-medium">Seuil de confiance</label>
+                <span class="text-primary-600 font-medium">{{ (confidenceThreshold * 100).toFixed(0) }}%</span>
+              </div>
+              <mat-slider
+                [(ngModel)]="confidenceThreshold"
+                min="0.5"
+                max="0.95"
+                step="0.05"
+                thumbLabel
+                tickInterval="0.05"
+                class="w-full">
+              </mat-slider>
+              <p class="text-sm text-gray-500 mt-2">
+                Définissez le niveau de confiance minimum pour qu'une maladie soit considérée comme détectée.
+              </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <mat-form-field  class="w-full">
+                <mat-label>Plante par défaut</mat-label>
+                <mat-select [(ngModel)]="defaultPlantType">
+                  <mat-option *ngFor="let plant of plantTypes" [value]="plant.id">
+                    {{ plant.name }}
+                  </mat-option>
+                </mat-select>
+                <mat-icon matSuffix>grass</mat-icon>
+              </mat-form-field>
+
+              <div class="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
+                <div>
+                  <h4 class="font-medium">Téléversement automatique</h4>
+                  <p class="text-sm text-gray-500">Envoyer automatiquement les images</p>
+                </div>
+                <mat-slide-toggle [(ngModel)]="autoUpload" color="primary"></mat-slide-toggle>
+              </div>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <!-- Paramètres avancés -->
+      <mat-card>
+        <mat-card-header>
+          <mat-card-title>
+            <div class="flex items-center">
+              <div class="p-2 bg-purple-100 rounded-lg mr-3">
+                <mat-icon class="text-purple-600">code</mat-icon>
+              </div>
+              <div>
+                <div class="font-semibold">Paramètres avancés</div>
+                <div class="text-sm text-gray-500">Configuration technique de l'application</div>
+              </div>
+            </div>
+          </mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="space-y-6 mt-4">
+            <mat-form-field  class="w-full">
+              <mat-label>Endpoint API</mat-label>
+              <input matInput [(ngModel)]="apiEndpoint" placeholder="https://api.example.com">
+              <mat-icon matSuffix>link</mat-icon>
+              <mat-hint>URL du serveur backend</mat-hint>
+            </mat-form-field>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label class="font-medium block mb-2">Taille du cache (MB)</label>
+                <mat-slider
+                  [(ngModel)]="cacheSize"
+                  min="10"
+                  max="500"
+                  step="10"
+                  thumbLabel
+                  tickInterval="50"
+                  class="w-full">
+                </mat-slider>
+                <p class="text-sm text-gray-500 mt-2">Valeur actuelle: {{ cacheSize }} MB</p>
+              </div>
+
+              <div class="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
+                <div>
+                  <h4 class="font-medium">Mode débogage</h4>
+                  <p class="text-sm text-gray-500">Activer les logs détaillés</p>
+                </div>
+                <mat-slide-toggle [(ngModel)]="debugMode" color="primary"></mat-slide-toggle>
+              </div>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+    <!-- Colonne droite -->
+    <div class="space-y-8">
+      <!-- Notifications -->
+      <mat-card>
+        <mat-card-header>
+          <mat-card-title>
+            <div class="flex items-center">
+              <div class="p-2 bg-yellow-100 rounded-lg mr-3">
+                <mat-icon class="text-yellow-600">notifications</mat-icon>
+              </div>
+              <div>
+                <div class="font-semibold">Notifications</div>
+                <div class="text-sm text-gray-500">Configurez vos préférences de notifications</div>
+              </div>
+            </div>
+          </mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="space-y-4 mt-4">
+            <div class="flex items-center justify-between">
+              <div>
+                <h4 class="font-medium">Notifications par email</h4>
+                <p class="text-sm text-gray-500">Recevoir des emails</p>
+              </div>
+              <mat-slide-toggle [(ngModel)]="emailNotifications" color="primary"></mat-slide-toggle>
+            </div>
+
+            <mat-divider></mat-divider>
+
+            <div class="flex items-center justify-between">
+              <div>
+                <h4 class="font-medium">Notifications push</h4>
+                <p class="text-sm text-gray-500">Notifications système</p>
+              </div>
+              <mat-slide-toggle [(ngModel)]="pushNotifications" color="primary"></mat-slide-toggle>
+            </div>
+
+            <mat-divider></mat-divider>
+
+            <div class="flex items-center justify-between">
+              <div>
+                <h4 class="font-medium">Rapports hebdomadaires</h4>
+                <p class="text-sm text-gray-500">Résumé hebdomadaire</p>
+              </div>
+              <mat-slide-toggle [(ngModel)]="weeklyReports" color="primary"></mat-slide-toggle>
+            </div>
+
+            <mat-divider></mat-divider>
+
+            <div class="flex items-center justify-between">
+              <div>
+                <h4 class="font-medium">Alertes critiques</h4>
+                <p class="text-sm text-gray-500">Maladies à haute sévérité</p>
+              </div>
+              <mat-slide-toggle [(ngModel)]="criticalAlerts" color="primary"></mat-slide-toggle>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <!-- Informations système -->
+      <mat-card>
+        <mat-card-header>
+          <mat-card-title>
+            <div class="flex items-center">
+              <div class="p-2 bg-gray-100 rounded-lg mr-3">
+                <mat-icon class="text-gray-600">info</mat-icon>
+              </div>
+              <div>
+                <div class="font-semibold">Informations système</div>
+                <div class="text-sm text-gray-500">Détails sur l'application et le système</div>
+              </div>
+            </div>
+          </mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="space-y-4 mt-4">
+            <div class="flex justify-between">
+              <span class="text-gray-600">Version</span>
+              <span class="font-medium">2.0.1</span>
+            </div>
+            <mat-divider></mat-divider>
+            <div class="flex justify-between">
+              <span class="text-gray-600">Dernière mise à jour</span>
+              <span class="font-medium">15/01/2024</span>
+            </div>
+            <mat-divider></mat-divider>
+            <div class="flex justify-between">
+              <span class="text-gray-600">Espace utilisé</span>
+              <span class="font-medium">245 MB / 1 GB</span>
+            </div>
+            <mat-divider></mat-divider>
+            <div class="flex justify-between">
+              <span class="text-gray-600">Analyses stockées</span>
+              <span class="font-medium">1,247</span>
+            </div>
+          </div>
+          
+          <div class="mt-6">
+            <button mat-stroked-button color="primary" class="w-full">
+              <mat-icon>update</mat-icon>
+              <span class="ml-2">Vérifier les mises à jour</span>
+            </button>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <!-- Aide et support -->
+      <mat-card>
+        <mat-card-header>
+          <mat-card-title>
+            <div class="flex items-center">
+              <div class="p-2 bg-red-100 rounded-lg mr-3">
+                <mat-icon class="text-red-600">help</mat-icon>
+              </div>
+              <div>
+                <div class="font-semibold">Aide et support</div>
+                <div class="text-sm text-gray-500">Ressources d'aide et contact</div>
+              </div>
+            </div>
+          </mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="space-y-4 mt-4">
+            <button mat-button color="primary" class="w-full justify-start">
+              <mat-icon>menu_book</mat-icon>
+              <span class="ml-2">Documentation</span>
+            </button>
+            <mat-divider></mat-divider>
+            <button mat-button color="primary" class="w-full justify-start">
+              <mat-icon>contact_support</mat-icon>
+              <span class="ml-2">Contactez le support</span>
+            </button>
+            <mat-divider></mat-divider>
+            <button mat-button color="primary" class="w-full justify-start">
+              <mat-icon>bug_report</mat-icon>
+              <span class="ml-2">Signaler un bug</span>
+            </button>
+            <mat-divider></mat-divider>
+            <button mat-button color="primary" class="w-full justify-start">
+              <mat-icon>feedback</mat-icon>
+              <span class="ml-2">Donner votre avis</span>
+            </button>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+</div>

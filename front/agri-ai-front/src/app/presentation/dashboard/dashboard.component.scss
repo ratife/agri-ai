@@ -1,0 +1,129 @@
+.dashboard-container {
+  padding: 1rem;
+  
+  @media (min-width: 768px) {
+    padding: 1.5rem;
+  }
+}
+
+.stat-card {
+  transition: all 0.3s ease;
+  border-radius: 12px;
+  overflow: hidden;
+  
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  }
+  
+  mat-card-content {
+    padding: 1.5rem;
+  }
+}
+
+// Styles pour les graphiques
+.chart-container {
+  height: 300px;
+  position: relative;
+}
+
+// Styles pour les listes
+mat-list {
+  padding: 0;
+  
+  mat-list-item {
+    border-radius: 8px;
+    margin-bottom: 0.5rem;
+    transition: background-color 0.2s ease;
+    
+    &:last-child {
+      margin-bottom: 0;
+    }
+    
+    &:hover {
+      background-color: rgba(0, 0, 0, 0.04);
+    }
+  }
+}
+
+// Styles pour les actions rapides
+.quick-action-card {
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 1rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  
+  &:hover {
+    border-color: #3b82f6;
+    background-color: rgba(59, 130, 246, 0.05);
+    transform: translateX(4px);
+  }
+}
+
+// Responsive adjustments
+@media (max-width: 768px) {
+  .dashboard-container {
+    padding: 0.5rem;
+  }
+  
+  .stat-card {
+    mat-card-content {
+      padding: 1rem;
+    }
+  }
+}
+
+// Animation pour le chargement
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+:host {
+  display: block;
+  animation: fadeIn 0.3s ease-out;
+}
+
+// Styles pour les barres de progression personnalisées
+.progress-bar-custom {
+  height: 8px;
+  border-radius: 4px;
+  overflow: hidden;
+  background-color: #e5e7eb;
+  
+  .progress-fill {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 0.3s ease;
+  }
+}
+
+// Styles pour les chips de sévérité
+.severity-chip {
+  font-size: 0.75rem;
+  font-weight: 500;
+  padding: 4px 12px;
+  border-radius: 16px;
+  
+  &.low {
+    background-color: #d1fae5;
+    color: #065f46;
+  }
+  
+  &.medium {
+    background-color: #fef3c7;
+    color: #92400e;
+  }
+  
+  &.high {
+    background-color: #fee2e2;
+    color: #991b1b;
+  }
+}

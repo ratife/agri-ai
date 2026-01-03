@@ -1,0 +1,298 @@
+<div class="dashboard-container">
+  <!-- En-tête -->
+  <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
+    <div>
+      <h1 class="text-3xl font-bold text-gray-900">Tableau de bord</h1>
+      <p class="text-gray-600 mt-2">Vue d'ensemble de vos analyses et statistiques</p>
+    </div>
+    
+    <button mat-raised-button color="primary" (click)="refreshDashboard()" [disabled]="isLoading">
+      <mat-icon>refresh</mat-icon>
+      <span class="ml-2">Actualiser</span>
+    </button>
+  </div>
+
+  <!-- Indicateur de chargement -->
+  <div *ngIf="isLoading" class="flex justify-center items-center py-12">
+    <mat-spinner diameter="50"></mat-spinner>
+  </div>
+
+  <!-- Contenu principal -->
+  <div *ngIf="!isLoading">
+    <!-- Cartes de statistiques -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+      <mat-card class="stat-card">
+        <mat-card-content>
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-gray-500 text-sm">Analyses totales</p>
+              <h3 class="text-3xl font-bold mt-2">{{ totalAnalyses }}</h3>
+              <p class="text-green-600 text-sm mt-1">
+                <mat-icon class="text-sm align-middle">trending_up</mat-icon>
+                +12% cette semaine
+              </p>
+            </div>
+            <div class="p-3 bg-blue-100 rounded-full">
+              <mat-icon class="text-blue-600">assessment</mat-icon>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="stat-card">
+        <mat-card-content>
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-gray-500 text-sm">Plantes uniques</p>
+              <h3 class="text-3xl font-bold mt-2">{{ uniquePlants }}</h3>
+              <p class="text-green-600 text-sm mt-1">
+                <mat-icon class="text-sm align-middle">local_florist</mat-icon>
+                Diversité végétale
+              </p>
+            </div>
+            <div class="p-3 bg-green-100 rounded-full">
+              <mat-icon class="text-green-600">grass</mat-icon>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="stat-card">
+        <mat-card-content>
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-gray-500 text-sm">Maladies détectées</p>
+              <h3 class="text-3xl font-bold mt-2">{{ uniqueDiseases }}</h3>
+              <p class="text-yellow-600 text-sm mt-1">
+                <mat-icon class="text-sm align-middle">warning</mat-icon>
+                Surveillance active
+              </p>
+            </div>
+            <div class="p-3 bg-yellow-100 rounded-full">
+              <mat-icon class="text-yellow-600">health_and_safety</mat-icon>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="stat-card">
+        <mat-card-content>
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-gray-500 text-sm">Sévérité élevée</p>
+              <h3 class="text-3xl font-bold mt-2">{{ highSeverityCount }}</h3>
+              <p class="text-red-600 text-sm mt-1">
+                <mat-icon class="text-sm align-middle">priority_high</mat-icon>
+                Attention requise
+              </p>
+            </div>
+            <div class="p-3 bg-red-100 rounded-full">
+              <mat-icon class="text-red-600">error</mat-icon>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+    <!-- Graphiques et analyses récentes -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
+      <!-- Distribution de sévérité -->
+      <mat-card class="lg:col-span-2">
+        <mat-card-header>
+          <mat-card-title>Activité hebdomadaire</mat-card-title>
+          <mat-card-subtitle>Nombre d'analyses par jour</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="mt-4">
+            <div class="flex items-end h-48 gap-2 mt-6">
+              <div *ngFor="let day of weeklyAnalytics" class="flex-1 flex flex-col items-center">
+                <div 
+                  class="w-3/4 bg-blue-500 rounded-t-lg transition-all hover:bg-blue-600"
+                  [style.height]="day.count * 15 + 'px'"
+                  [matTooltip]="day.count + ' analyses'"
+                ></div>
+                <span class="mt-2 text-sm text-gray-600">{{ day.day }}</span>
+              </div>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <!-- Distribution de sévérité -->
+      <mat-card>
+        <mat-card-header>
+          <mat-card-title>Distribution de sévérité</mat-card-title>
+          <mat-card-subtitle>Répartition des analyses</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="mt-4 space-y-4">
+            <div *ngFor="let item of severityDistribution" class="flex items-center justify-between">
+              <div class="flex items-center">
+                <div class="w-3 h-3 rounded-full mr-3" [style.backgroundColor]="item.color"></div>
+                <span>{{ item.severity }}</span>
+              </div>
+              <div class="flex items-center">
+                <span class="font-semibold mr-2">{{ item.count }}</span>
+                <span class="text-gray-500 text-sm">({{ (item.count / totalAnalyses * 100).toFixed(0) }}%)</span>
+              </div>
+            </div>
+          </div>
+          <div class="mt-6">
+            <div class="flex h-4 rounded-full overflow-hidden">
+              <div 
+                *ngFor="let item of severityDistribution" 
+                [style.backgroundColor]="item.color"
+                [style.width]="(item.count / totalAnalyses * 100) + '%'"
+                class="h-full"
+              ></div>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+    <!-- Analyses récentes et actions rapides -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <!-- Analyses récentes -->
+      <mat-card class="lg:col-span-2">
+        <mat-card-header>
+          <mat-card-title>Analyses récentes</mat-card-title>
+          <mat-card-subtitle>Les 5 dernières analyses effectuées</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <div *ngIf="recentAnalyses.length === 0" class="text-center py-8 text-gray-500">
+            <mat-icon class="text-4xl mb-2">info</mat-icon>
+            <p>Aucune analyse disponible</p>
+          </div>
+          
+          <mat-list *ngIf="recentAnalyses.length > 0">
+            <mat-list-item *ngFor="let analysis of recentAnalyses" class="hover:bg-gray-50 rounded-lg mb-2">
+              <div class="flex items-center justify-between w-full py-3">
+                <div class="flex items-center">
+                  <div class="p-2 bg-gray-100 rounded-lg mr-4">
+                    <mat-icon class="text-gray-600">grass</mat-icon>
+                  </div>
+                  <div>
+                    <h4 class="font-medium">{{ analysis.plantId }}</h4>
+                    <p class="text-sm text-gray-500">{{ analysis.diseaseId }}</p>
+                  </div>
+                </div>
+                
+                <div class="flex items-center gap-4">
+                  <div class="text-right">
+                    <span class="font-medium" [ngClass]="getConfidenceColor(analysis.confidence)">
+                      {{ (analysis.confidence * 100).toFixed(0) }}%
+                    </span>
+                    <p class="text-sm text-gray-500">{{ formatDate(analysis.date) }}</p>
+                  </div>
+                  <mat-chip [ngClass]="getSeverityColor('medium')">
+                    Moyenne
+                  </mat-chip>
+                </div>
+              </div>
+            </mat-list-item>
+          </mat-list>
+          
+          <div class="mt-6">
+            <button mat-button color="primary" routerLink="/history">
+              <span>Voir tout l'historique</span>
+              <mat-icon>arrow_forward</mat-icon>
+            </button>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <!-- Actions rapides -->
+      <mat-card>
+        <mat-card-header>
+          <mat-card-title>Actions rapides</mat-card-title>
+          <mat-card-subtitle>Accédez rapidement aux fonctionnalités</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="space-y-4 mt-4">
+            <div *ngFor="let action of quickActions" 
+                 class="flex items-center p-4 rounded-lg border border-gray-200 hover:border-primary-300 hover:bg-primary-50 transition cursor-pointer"
+                 [routerLink]="action.route">
+              <div class="p-3 rounded-lg mr-4" [ngClass]="action.color">
+                <mat-icon class="text-white">{{ action.icon }}</mat-icon>
+              </div>
+              <div class="flex-1">
+                <h4 class="font-medium">{{ action.title }}</h4>
+                <p class="text-sm text-gray-500">{{ action.description }}</p>
+              </div>
+              <mat-icon class="text-gray-400">chevron_right</mat-icon>
+            </div>
+          </div>
+          
+          <mat-divider class="my-6"></mat-divider>
+          
+          <div class="text-center">
+            <p class="text-sm text-gray-500 mb-4">Besoin d'aide ?</p>
+            <button mat-stroked-button color="primary" class="w-full">
+              <mat-icon>help</mat-icon>
+              <span class="ml-2">Consulter la documentation</span>
+            </button>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+    <!-- Section d'information -->
+    <div class="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
+      <mat-card>
+        <mat-card-header>
+          <mat-card-title>
+            <mat-icon class="mr-2 text-green-600">verified</mat-icon>
+            Système opérationnel
+          </mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <p class="text-gray-600">Tous les services fonctionnent normalement.</p>
+          <div class="flex items-center mt-4">
+            <div class="w-3 h-3 rounded-full bg-green-500 mr-2"></div>
+            <span class="text-sm">API de diagnostic: En ligne</span>
+          </div>
+          <div class="flex items-center mt-2">
+            <div class="w-3 h-3 rounded-full bg-green-500 mr-2"></div>
+            <span class="text-sm">Base de données: En ligne</span>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card>
+        <mat-card-header>
+          <mat-card-title>
+            <mat-icon class="mr-2 text-blue-600">notifications</mat-icon>
+            Alertes récentes
+          </mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <p class="text-gray-600">Aucune alerte critique.</p>
+          <div class="mt-4">
+            <mat-chip class="bg-green-100 text-green-800 mr-2">Stable</mat-chip>
+            <mat-chip class="bg-blue-100 text-blue-800">2 notifications</mat-chip>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card>
+        <mat-card-header>
+          <mat-card-title>
+            <mat-icon class="mr-2 text-purple-600">update</mat-icon>
+            Prochaine mise à jour
+          </mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <p class="text-gray-600">Version 2.1.0 prévue pour le 15/02/2024</p>
+          <div class="mt-4">
+            <div class="flex items-center justify-between text-sm">
+              <span>Progression</span>
+              <span>75%</span>
+            </div>
+            <mat-progress-bar mode="determinate" value="75" class="mt-2"></mat-progress-bar>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+</div>
