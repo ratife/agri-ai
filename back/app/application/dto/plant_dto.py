@@ -8,3 +8,4 @@ class AnalyzeResponseDTO(BaseModel):
     confidence: float
     advice: Optional[str] = None
     date: date
+    plant
