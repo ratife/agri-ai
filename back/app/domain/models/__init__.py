@@ -4,8 +4,8 @@ from app.domain.models.plant import Plant
 from app.domain.models.recommendation import Recommendation
 
 __all__ = [
-    'analysis',
-    'disease',
-    'plant',
-    'recommendation',
+    'Analysis',
+    'Disease',
+    'Plant',
+    'Recommendation',
 ]

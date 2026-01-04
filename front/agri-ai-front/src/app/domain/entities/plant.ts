@@ -14,8 +14,8 @@ export interface Disease {
 
 export interface Analysis {
   id: string;
-  plantId: string;
-  diseaseId: string;
+  plant: Plant;
+  disease: Disease;
   imageUrl?: string;
   confidence: number;
   date: Date;

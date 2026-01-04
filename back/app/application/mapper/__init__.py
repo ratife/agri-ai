@@ -1,8 +1,8 @@
-from app.application.dto.paginate_result import PaginatedResult
-from app.application.dto.plant_dto import PlantDTO
-from app.application.dto.analyze_dto import AnalyzeDTO
-__all__= [
-    "PaginatedResult",
-    "PlantDTO",
-    "AnalyzeDTO"
-]
+#from app.application.mapper.analysis_mapper import AnalysisMapper
+#from app.application.mapper.plant_mapper import PlantMapper
+#from app.application.mapper.disease_mapper import DiseaseMapper
+#__all__= [
+#    "AnalysisMapper",
+#    "PlantMapper",
+#    "DiseaseMapper"
+#]

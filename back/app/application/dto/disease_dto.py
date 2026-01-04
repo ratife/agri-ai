@@ -3,6 +3,7 @@ from typing import Optional
 
 from pydantic import BaseModel
 
-class PlantDTO(BaseModel):
-    id:int
-    name:str
+class DiseaseDTO(BaseModel):
+    id : int
+    name : str
+    severity : str

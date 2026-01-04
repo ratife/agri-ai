@@ -1,14 +1,12 @@
-from app.application.dto import AnalyzeDTO
-from app.domain.models import Analysis
+from app.application.dto import PlantDTO
+from app.domain.models import  Plant
 
 
-class AnalysisMapper:
+class PlantMapper:
 
     @staticmethod
-    def to_response(result:Analysis):
-        return AnalyzeDTO(
-            disease= result.disease,
-            confidence= result.confidence,
-            advice=result.advice,
-            date=result.created_at.date()
+    def to_dto(result:Plant):
+        return PlantDTO(
+            id=result.id,
+            name=result.name
         )

@@ -107,10 +107,10 @@ export class DashboardComponent implements OnInit {
   calculateStatistics(): void {
     this.totalAnalyses = this.history.length;
     
-    const uniquePlantsSet = new Set(this.history.map(analysis => analysis.plantId));
+    const uniquePlantsSet = new Set(this.history.map(analysis => analysis.plant.id));
     this.uniquePlants = uniquePlantsSet.size;
     
-    const uniqueDiseasesSet = new Set(this.history.map(analysis => analysis.diseaseId));
+    const uniqueDiseasesSet = new Set(this.history.map(analysis => analysis.disease.id));
     this.uniqueDiseases = uniqueDiseasesSet.size;
     
     // Pour l'exemple, on considère que les maladies avec confidence > 0.8 sont de haute sévérité

@@ -99,24 +99,18 @@ export class HistoryComponent implements OnInit {
   }
 
   applyFilters(): void {
-    this.filteredHistory = this.history.filter(analysis => {
-      // Filtre par nom de plante
-      if (this.plantFilter && !analysis.plantId.toLowerCase().includes(this.plantFilter.toLowerCase())) {
-        return false;
+    this.isLoading = true;
+    this.analysisService.getHistory(this.plantFilter).subscribe({
+      next: (history) => {
+        this.history = history.items;
+        this.filteredHistory = [...this.history];
+        this.isLoading = false;
+      },
+      error: (error) => {
+        console.error('Erreur lors du chargement de l\'historique:', error);
+        this.snackBar.open('Erreur lors du chargement de l\'historique', 'Fermer', { duration: 5000 });
+        this.isLoading = false;
       }
-      
-      // Filtre par date
-      if (this.dateFilter) {
-        const analysisDate = new Date(analysis.date);
-        const filterDate = new Date(this.dateFilter);
-        if (analysisDate.toDateString() !== filterDate.toDateString()) {
-          return false;
-        }
-      }
-      
-      // Filtre par sévérité (à implémenter si disponible dans les données)
-      // Pour l'instant, on utilise un placeholder
-      return true;
     });
   }
 
@@ -168,12 +162,12 @@ export class HistoryComponent implements OnInit {
   }
 
   getUniquePlantsCount(): number {
-    const uniquePlants = new Set(this.history.map(analysis => analysis.plantId));
+    const uniquePlants = new Set(this.history.map(analysis => analysis.plant.id));
     return uniquePlants.size;
   }
 
   getUniqueDiseasesCount(): number {
-    const uniqueDiseases = new Set(this.history.map(analysis => analysis.diseaseId));
+    const uniqueDiseases = new Set(this.history.map(analysis => analysis.disease.id));
     return uniqueDiseases.size;
   }
 }

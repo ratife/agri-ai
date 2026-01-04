@@ -12,7 +12,7 @@ class GetHistoryUseCase:
                 limit:int = 0, offset:int = 10)-> PaginatedResult:
         paginatedResult = self.analysis_repository.find(plant_name,limit,offset)
         paginatedResult.items = [
-            AnalysisMapper.to_response(a)
+            AnalysisMapper.to_dto(a)
             for a in paginatedResult.items
         ]
         return paginatedResult
